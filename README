@@ -53,15 +53,16 @@ def users
 	respond_to do |format|
 		format.html
 		format.csv do
-	  options = {
-	    :db_table => "users",
-	    :label => "user_export",
-	    :include => [:country]
-	    :scope => @users,
-	    :fields => ["id","nickname","email","first_name","last_name","country.name","created_at"],
-	    :header => ["ID","Nickname","Email","First Name","Last Name","Country","Created At"]
-	  }
-	  render_to_csv(options)
+	  	options = {
+		    :db_table => "users",
+		    :label => "user_export",
+		    :include => [:country]
+		    :scope => @users,
+		    :fields => ["id","nickname","email","first_name","last_name","country.name","created_at"],
+		    :header => ["ID","Nickname","Email","First Name","Last Name","Country","Created At"]
+		  }
+		  render_to_csv(options)
+		end
 	end
 end
 
