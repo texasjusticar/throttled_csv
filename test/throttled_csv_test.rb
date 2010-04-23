@@ -26,14 +26,10 @@ class TestcsvControllerTest < ActionController::TestCase
   end
   
   test "csv response for test model" do
-    setup do
-      ActionController::Routing::Routes.draw do |map|
-        map.connect "/testcsv",{:controller => "testcsv_controller", :action => "index"}
-      end
-    end
     get(:index)
     assert_response :success
-    puts @response.inspect
-   
+    assert @response.headers.key?("Content-Type")
+    assert @response.headers["Content-Type"] == "text/csv"
+    assert @response.body.is_a?(Proc)
   end
 end
