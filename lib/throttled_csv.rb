@@ -19,10 +19,11 @@ module ThrottledCsv
         'Content-Transfer-Encoding' => 'binary'
       )
       @performed_render = false
+
       render :status => 200, :text => Proc.new { |response, output|
     
         header = options[:header] || options[:fields].collect{|field| field.humanize}
-    
+
         output.write FasterCSV.generate_line(header)
 
         last_id = 0
