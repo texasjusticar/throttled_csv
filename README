@@ -1,0 +1,69 @@
+ThrottledCsv
+============
+
+this plugin hopes to extract out several key features of exporting db data
+to csv that seemed to be needed.
+
+heavily inspired by Andrew Timberlake 
+http://ramblingsonrails.com/download-a-large-amount-of-data-in-csv-from-rails
+
+throttled - it will download as it's generated to mitigate memory usage for
+						large datasets
+dynamic fields - will allow for attributes as well as methods, pick and 
+								choose what you want the columns to be
+black-box - now it's simply a method you define an options hash for in the
+						controller, making it trivial to add future csv exports
+
+Options
+=======
+
+:db_table - name of primary database table with the data
+:label - will be concatenated with datetime for resulting filename
+:include - used for joins with main model, use just like activerecord
+:scope - AR model with scopes used as the basis for an AR find
+:fields - array of columns to export in csv.  Can use association or custom methods
+:header (optional)- labels for top header row of csv, can be anything you want.  
+         If not defined will autofill with humanized version of :fields.
+
+Example
+=======
+
+using the following db tables:
+
+create_table "users", :force => true do |t|
+  t.string   "email"
+  t.string   "crypted_password",              :limit => 40
+  t.string   "salt",                          :limit => 40
+  t.datetime "created_at"
+  t.datetime "updated_at"
+  t.integer  "country_id"
+  t.string   "nickname"
+  t.string   "first_name"
+  t.string   "last_name"
+end
+
+create_table "countries", :force => true do |t|
+  t.string   "name"
+end
+
+your controller action will look like thus:
+
+def users
+	@users = User.all
+	respond_to do |format|
+		format.html
+		format.csv do
+	  options = {
+	    :db_table => "users",
+	    :label => "user_export",
+	    :include => [:country]
+	    :scope => @users,
+	    :fields => ["id","nickname","email","first_name","last_name","country.name","created_at"],
+	    :header => ["ID","Nickname","Email","First Name","Last Name","Country","Created At"]
+	  }
+	  render_to_csv(options)
+	end
+end
+
+
+Copyright (c) 2010 Ethan Burrow, released under the MIT license
