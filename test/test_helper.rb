@@ -11,12 +11,19 @@ class ActionController::TestCase
  ActionController::Routing::Routes.draw { |map| map.connect ':controller/:action/:id' }
 end
 
-
-TestModel = [
+class TestModel
+  def self.all
+    [
       {:id=>1,:name=>"first",:data=>"district 9 is better than avatar"},
       {:id=>2,:name=>"second",:data=>"magic happens here"},
       {:id=>3,:name=>"third",:data=>"thank you for reading my crazy"}
     ]
+  end
+  
+  def self.find(*args)
+    all
+  end
+end
 
 class TestcsvController < ActionController::Base
   def index
