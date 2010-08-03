@@ -36,7 +36,11 @@ module ThrottledCsv
             data = options[:fields].collect do |column|
               methods = column.split(".")
               # sorry, instance_eval wasn't working as expected
-              methods.inject(s){|result,method| result.send(method)}
+              begin
+                methods.inject(s){|result,method| result.send(method)}
+              rescue NoMethodError,RuntimeError # don't let corrupted or bad data stop the entire export
+                "N/A"
+              end
             end
             output.write FasterCSV.generate_line(data)
           }
