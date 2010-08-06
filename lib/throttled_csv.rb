@@ -34,13 +34,11 @@ module ThrottledCsv
           last_id = items.size > 0 ? items[-1].id : nil
           items.each { |s|
             data = options[:fields].collect do |column|
-              methods = column.split(".")
-              # sorry, instance_eval wasn't working as expected
-              begin
-                methods.inject(s){|result,method| result.send(method)}
-              rescue NoMethodError,RuntimeError # don't let corrupted or bad data stop the entire export
-                "N/A"
+              value = column.split(/\b\.\b/).inject(s) do |result,expression| 
+                break if result.nil?
+                result.instance_eval(expression)
               end
+              value.nil? ? "N/A" : value
             end
             output.write FasterCSV.generate_line(data)
           }
@@ -58,5 +56,6 @@ module ThrottledCsv
       default_options.merge!({:include => options[:include]}) if options.key?(:include)
       default_options
     end
+    
   end
 end
