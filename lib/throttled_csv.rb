@@ -36,7 +36,7 @@ module ThrottledCsv
             data = options[:fields].collect do |column|
               value = column.split(/\b\.\b/).inject(s) do |result,expression| 
                 break if result.nil?
-                result.instance_eval(expression)
+                result.try(expression)
               end
               value.nil? ? "N/A" : value
             end
